@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Register = () => {
@@ -8,6 +8,7 @@ const Register = () => {
         email:'',
         password:''
     })
+    const navigate = useNavigate();
     const handleChanges =(e) => {
         setValues({...values, [e.target.name]:e.target.value})
     }
@@ -15,7 +16,9 @@ const Register = () => {
         e.preventDefault();
         try{
             const response = await axios.post('http://localhost:5000/auth/register', values)
-            console.log(response)
+            if(response.status === 201) {
+                navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
+            }
         } catch (error) {
             console.error('Error during registration:', error);
         }
