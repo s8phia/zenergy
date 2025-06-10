@@ -1,8 +1,9 @@
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
+  const [username, setUsername] = useState('')
   const navigate = useNavigate()
   const fetchUser = async () => {
     try {
@@ -12,7 +13,9 @@ const Home = () => {
           "Authorization" : `Bearer ${token}`
         }
       })
-      if(response.status !== 201) {
+      if(response.status === 201) {
+        setUsername(response.data.user.username)
+      } else {
         navigate('/login')
       }
     } catch(err){
@@ -25,7 +28,15 @@ const Home = () => {
     fetchUser()
   }, [])
   return (
-    <div className='text-3xl text-blue-500'>Home</div>
+    <div>
+      <div>
+        <h1>Good morning, {username}</h1>
+      </div>
+      <div>
+        
+      </div>
+
+    </div>
   )
 }
 
