@@ -52,4 +52,35 @@ router.get('/', verifyToken, async (req, res) => {
     }
 })
 
+router.delete('/:id', verifyToken, async (req, res) => {
+    try {
+        const db = await connectToDatabase();
+        await db.query(
+            'DELETE FROM todos WHERE id = ? AND user_id = ?',
+            [req.params.id, req.userId]
+        );
+        res.status(200).json({ message: 'Task deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "server error" });
+    }
+});
+
+
+router.patch('/:id', verifyToken, async (req, res) => {
+    const {title, description, energy_level} = req.body;
+    try{
+        const db = await connectToDatabase();
+        await db.query(
+            'UPDATE todos SET title = ?, description = ?, energy_level = ? WHERE id = ? AND user_id = ?',
+            [title, description, energy_level, req.params.id, req.userId]
+          );
+          
+        res.status(200).json({ message: "Task updated successfully" });
+    } catch(err){
+        console.error(err);
+        res.status(500).json({message: "server error"});
+    }
+})
+
 export default router;

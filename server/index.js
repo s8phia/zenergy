@@ -7,7 +7,7 @@ import tasksRouter from './routes/taskRoutes.js';
 const app = express();
 app.use(cors({
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PATCH", "DELETE"]
 }))
 app.use(express.json())
 app.use('/auth', authRouter) 
