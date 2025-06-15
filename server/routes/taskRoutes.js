@@ -83,4 +83,23 @@ router.patch('/:id', verifyToken, async (req, res) => {
     }
 })
 
+router.put('/:id/complete', verifyToken, async (req, res) => {
+    const {completed} = req.body;
+    if(typeof completed === 'undefined'){
+        return res.status(400).json({ message: "Missing 'completed' field" });
+    }
+    try {
+        const db = await connectToDatabase();
+        await db.query(
+            'UPDATE todos SET completed = ? WHERE id = ? AND user_id = ?',
+            [completed, req.params.id, req.userId]
+        );
+        res.status(200).json({ message: "Task completion status updated successfully" });
+
+    } catch(err){
+        console.error(err);
+        res.status(500).json({message: "server error"});
+    }
+})
+
 export default router;

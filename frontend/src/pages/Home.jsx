@@ -1,6 +1,7 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import CompletionChart from '../components/completionChart'
 
 
 const Home = () => {
@@ -12,6 +13,9 @@ const Home = () => {
   const [showPopup, setShowPopup] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [editTaskId, setEditTaskId] = useState(null)
+  const [chatInput, setChatInput] = useState('');
+const [chatResponse, setChatResponse] = useState('');
+const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate()
   const fetchUser = async () => {
@@ -104,7 +108,51 @@ const Home = () => {
       console.error('Error deleting task:', err)
     }
   }
+  const handleComplete = async (taskId, currentCompleted) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`http://localhost:5000/tasks/${taskId}/complete`, 
+        { completed: currentCompleted ? 0 : 1 },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+        setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === taskId ? { ...task, completed: currentCompleted ? 0 : 1 } : task
+        )
+      );
+    } catch (err) {
+      console.error('Error marking task as complete:', err);
+    }
+  };
 
+  const handleChatSubmit = async () => {
+    if (!chatInput.trim()) return;
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post('http://localhost:5000/api/chat', {
+        message: chatInput,
+        tasks,         
+        username       
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      setChatResponse(res.data.choices[0].message.content);
+    } catch (err) {
+      console.error('Chat error:', err);
+      setChatResponse('Sorry, something went wrong.');
+    }
+    setIsLoading(false);
+    setChatInput('');
+  };
+  
+  
+  
   useEffect(() => {
     fetchUser()
     fetchTasks()
@@ -113,25 +161,34 @@ const Home = () => {
   return (
    <div>
     <div className = "w-fit mx-auto flex-col justify-center items-center border rounded-3xl shadow-lg p-4 mt-10 mb-5">
-      <div className = "justify-center item-center text-3xl font-bold mb-2">Hello, {username}! </div>
+      <div className = "justify-center item-center text-3xl font-bold">Hello, {username}! </div>
       <div className="text-sm">Welcome to your space for balance, focus, and flow</div>
     </div>
     <div>
-      <div className = "container px-5 py-7 mx-auto p-4 border rounded-2xl shadow-lg overflow-auto max-h-80">
+      <div className = "container px-5 py-7 mx-auto p-4 border rounded-2xl shadow-lg">
         <h1 className = "text-2xl font-bold mb-4">
           Your Tasks
         </h1>
-        <div>
+        <div className="overflow-auto max-h-64">
           <button onClick={openAddPopup}>Add Task</button>
           <ul>
             {tasks.map(task => (
-              <li key={task.id}>
-                <div>
-                  <h2>{task.title}</h2>
-                  <p>{task.description}</p>
-                  <p>Energy Level: {task.energy_level}</p>
-                  <button onClick={() => openEditPopup(task)}>Edit</button>
-                  <button onClick={() => handleDelete(task.id)}>Delete</button>
+              <li key={task.id} className="mb-4">
+                <div className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    checked={task.completed === 1}
+                    onChange={() => handleComplete(task.id, task.completed)}
+                  />
+                  <div>
+                    <h2 className={task.completed ? 'line-through font-semibold' : 'font-semibold'}>
+                      {task.title}
+                    </h2>
+                    <p className={task.completed ? 'line-through' : ''}>{task.description}</p>
+                    <p className="text-sm text-gray-500">Energy Level: {task.energy_level}</p>
+                    <button onClick={() => openEditPopup(task)} className="mr-2">Edit</button>
+                    <button onClick={() => handleDelete(task.id)}>Delete</button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -170,6 +227,31 @@ const Home = () => {
         </div>
       </div>
     </div>
+    <div className="chatbot-container border rounded p-4 mt-6 max-w-md mx-auto shadow">
+  <h3 className="font-semibold mb-2">Task Assistant Chatbot</h3>
+  <textarea
+    value={chatInput}
+    onChange={(e) => setChatInput(e.target.value)}
+    placeholder="Ask about your tasks energy or how to get started..."
+    rows={3}
+    className="w-full border rounded p-2"
+  />
+  <button
+    onClick={handleChatSubmit}
+    disabled={isLoading}
+    className="mt-2 bg-blue-600 text-white py-1 px-4 rounded"
+  >
+    {isLoading ? 'Thinking...' : 'Ask'}
+  </button>
+
+  {chatResponse && (
+    <div className="mt-4 p-3 bg-gray-100 rounded whitespace-pre-line">
+      <strong>Response:</strong> <br />
+      {chatResponse}
+    </div>
+  )}
+</div>
+
    </div>
 
   )
