@@ -23,7 +23,7 @@ You are a helpful task assistant named Zenergy Bot. You are helping ${username} 
 Here are ${username}'s current tasks:
 ${formattedTasks}
 
-Based on what ${username} asks, offer personalized suggestions (e.g., "Do low energy tasks first", or "You could complete XYZ now"). 
+Based on what ${username} asks, offer personalized suggestions (e.g., "Do low energy tasks first", or "You could complete XYZ now").  But keep the responses short and sweet
 `;
 
     const response = await axios.post(

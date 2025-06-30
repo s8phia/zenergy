@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
+import PomodoroTimer from '../components/pomodoro.jsx';
 import { useNavigate } from 'react-router-dom'
-import CompletionChart from '../components/completionChart'
+
 
 
 const Home = () => {
@@ -159,21 +160,22 @@ const [isLoading, setIsLoading] = useState(false);
   }, [])
 
   return (
-   <div>
-    <div className = "w-fit mx-auto flex-col justify-center items-center border rounded-3xl shadow-lg p-4 mt-10 mb-5">
+   <div className='bg-gradient-to-b from-slate-200 via-orange-400 to-rose-300 min-h-screen  flex flex-col justify-between '>
+    <div className = "pt-16">
+    <div className = "w-fit mx-auto flex-col justify-center items-center border border-black rounded-3xl shadow-lg p-4 mt-10 mb-5 bg-pink-100">
       <div className = "justify-center item-center text-3xl font-bold">Hello, {username}! </div>
       <div className="text-sm">Welcome to your space for balance, focus, and flow</div>
     </div>
     <div>
-      <div className = "container px-5 py-7 mx-auto p-4 border rounded-2xl shadow-lg">
-        <h1 className = "text-2xl font-bold mb-4">
+      <div className = "container px-5 py-7 mx-auto p-4 border rounded-2xl shadow-lg bg-gray-200 border-black">
+        <h1 className = "text-2xl font-bold mb-4 font-style: italic ">
           Your Tasks
         </h1>
         <div className="overflow-auto max-h-64">
-          <button onClick={openAddPopup}>Add Task</button>
-          <ul>
+          <button className="bg-gradient-to-r from-amber-500 to-pink-300 hover:from-pink-500 hover:to-red-400 text-white px-4 py-2 rounded mb-4 transition-all duration-300 ease-in-out" onClick={openAddPopup}>Add Task</button>
+          <ul className='space-y-4'>
             {tasks.map(task => (
-              <li key={task.id} className="mb-4">
+              <li key={task.id} className="bg-white mb-4 border p-4 rounded-3xl shadow flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   <input
                     type="checkbox"
@@ -186,8 +188,8 @@ const [isLoading, setIsLoading] = useState(false);
                     </h2>
                     <p className={task.completed ? 'line-through' : ''}>{task.description}</p>
                     <p className="text-sm text-gray-500">Energy Level: {task.energy_level}</p>
-                    <button onClick={() => openEditPopup(task)} className="mr-2">Edit</button>
-                    <button onClick={() => handleDelete(task.id)}>Delete</button>
+                    <button onClick={() => openEditPopup(task)} className="mt-3 mr-2 bg-pink-300 text-white px-3 py-1 rounded-full transition duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:bg-amber-500">Edit</button>
+                    <button onClick={() => handleDelete(task.id)} className="mt-3 mr-2 bg-pink-300 text-white px-3 py-1 rounded-full transition duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:bg-amber-500">Delete</button>
                   </div>
                 </div>
               </li>
@@ -195,22 +197,24 @@ const [isLoading, setIsLoading] = useState(false);
           </ul>
           {showPopup && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="big-white p-6 reounded w-96">
-                <h2>{isEditMode? 'Edit Task' : 'Add Task'}</h2>
+              <div className="bg-pink-100 border border-black p-6 rounded-3xl w-96">
+                <h2 className = 'text-xl font-bold mb-4'>{isEditMode? 'Edit Task' : 'Add Task'}</h2>
 
                 <input
                   type= 'text'
                   placeholder= 'Title'
                   value={title}
                   onChange={(e)=> setTitle(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded-xl mb-2"
                 />
                 <textarea
                   placeholder='Description'
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded-xl mb-2"
                 />
 
-                <select value={energy} onChange={(e) => setEnergy(e.target.value)}>
+                <select className='w-full border border-gray-300 p-2 rounded-xl mb-2' value={energy} onChange={(e) => setEnergy(e.target.value)}>
                   <option value="">Select Energy Level</option>
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -227,8 +231,9 @@ const [isLoading, setIsLoading] = useState(false);
         </div>
       </div>
     </div>
-    <div className="chatbot-container border rounded p-4 mt-6 max-w-md mx-auto shadow">
-  <h3 className="font-semibold mb-2">Task Assistant Chatbot</h3>
+    <div className ='w-full text-center mt-4'>
+    <div className="chatbot-container inline-block align-top mr-6 mb-10 border rounded-2xl p-4 mt-6 max-w-full  shadow bg-gray-200 border-black" style={{ width: '45%' }}>
+    <h3 className="font-bold text-xl mb-2 p-2 font-style: italic ">Zenbot</h3>
   <textarea
     value={chatInput}
     onChange={(e) => setChatInput(e.target.value)}
@@ -239,7 +244,7 @@ const [isLoading, setIsLoading] = useState(false);
   <button
     onClick={handleChatSubmit}
     disabled={isLoading}
-    className="mt-2 bg-blue-600 text-white py-1 px-4 rounded"
+    className="mr-2 bg-pink-300 text-white px-3 py-1 rounded-full transition duration-200 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:bg-amber-500"
   >
     {isLoading ? 'Thinking...' : 'Ask'}
   </button>
@@ -251,7 +256,12 @@ const [isLoading, setIsLoading] = useState(false);
     </div>
   )}
 </div>
+  <div className = 'inline-block align-top w-[280px]'>
+  <PomodoroTimer  />
+  </div>
+  </div>
 
+   </div>
    </div>
 
   )
