@@ -221,9 +221,9 @@ const [isLoading, setIsLoading] = useState(false);
                   <option value="high">High</option>
                 </select>
 
-                <div className="flex justify-end mt-4">
-                  <button onClick={() => setShowPopup(false)}>Cancel</button>
-                  <button onClick={handleSubmit}>{isEditMode ? 'Update Task' : 'Add Task'}</button>
+                <div className="flex justify-end mt-4 gap-3">
+                  <button className = ' border border-black px-4 rounded-3xl' onClick={() => setShowPopup(false)}>Cancel</button>
+                  <button className = ' border border-black px-4 rounded-3xl' onClick={handleSubmit}>{isEditMode ? 'Update Task' : 'Add Task'}</button>
                 </div>
               </div>
             </div>
@@ -239,7 +239,7 @@ const [isLoading, setIsLoading] = useState(false);
     onChange={(e) => setChatInput(e.target.value)}
     placeholder="Ask about your tasks energy or how to get started..."
     rows={3}
-    className="w-full border rounded p-2"
+    className="w-full border rounded-2xl p-2"
   />
   <button
     onClick={handleChatSubmit}
@@ -250,7 +250,7 @@ const [isLoading, setIsLoading] = useState(false);
   </button>
 
   {chatResponse && (
-    <div className="mt-4 p-3 bg-gray-100 rounded whitespace-pre-line">
+    <div className="mt-4 p-3 bg-white rounded-2xl whitespace-pre-line">
       <strong>Response:</strong> <br />
       {chatResponse}
     </div>
